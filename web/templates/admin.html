@@ -27,7 +27,15 @@
     <button type="button" data-copy="invite-link">Copy</button>
   </div>
   <a class="button whatsapp" href="https://wa.me/?text={{ (message ~ invite_url)|urlencode }}" target="_blank" rel="noopener noreferrer">Share on WhatsApp</a>
-  <p class="hint">This page has its own secret address: bookmark it and don't share it, it's the only way to manage the group.</p>
+</section>
+
+<section class="card" id="organizer-link">
+  <h2>Your organizer link</h2>
+  <p class="muted">Keep it private: whoever has it can manage the group. This browser lists it on the home page; to open it from other devices, save it somewhere, like in your notes.</p>
+  <div class="copy">
+    <input id="admin-link" type="text" value="{{ admin_url }}" readonly aria-label="Organizer link">
+    <button type="button" data-copy="admin-link">Copy</button>
+  </div>
 </section>
 
 <section class="card" id="participants">

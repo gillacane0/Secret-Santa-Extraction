@@ -69,6 +69,10 @@ p {
   margin: 0 0 10px;
 }
 
+a {
+  color: var(--red);
+}
+
 .eyebrow {
   margin: 0;
   color: var(--muted);
@@ -287,6 +291,10 @@ button.link {
 
 .people .hint {
   margin: 0;
+}
+
+.people a {
+  font-weight: 600;
 }
 
 .actions {

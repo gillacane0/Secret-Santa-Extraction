@@ -3,6 +3,21 @@
 <h1>Draw names with your friends</h1>
 <p class="lead">Create a group, send the invite link to your friends and draw the names once everyone has joined. Each person sees only who they got: the organizer never sees the matches.</p>
 
+{% if groups %}
+<section class="card">
+  <h2>Your groups</h2>
+  <p class="muted">The groups you organize, remembered by this browser.</p>
+  <ul class="people">
+    {% for group in groups %}
+    <li>
+      <a href="{{ url_for('santa.admin', token=group.admin_token) }}">{{ group.name }}</a>
+      <span class="hint">{{ "Names drawn" if group.drawn_on else "Open for joining" }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
 <form class="card" method="post" action="{{ url_for('santa.create_group') }}">
   <h2>Create a group</h2>
   <label for="name">Group name</label>

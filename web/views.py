@@ -16,6 +16,9 @@ from .db import get_db
 
 bp = Blueprint("santa", __name__)
 
+ORGANIZED = "organized"  # session key: organizer tokens of the groups opened in this browser
+MAX_ORGANIZED = 20
+
 
 @contextmanager
 def _flash_errors():
@@ -43,7 +46,9 @@ def format_day(iso_date: str) -> str:
 
 @bp.get("/")
 def home():
-    return render_template("home.html")
+    conn = get_db()
+    groups = [group for token in session.get(ORGANIZED, []) if (group := store.group_by_token(conn, token))]
+    return render_template("home.html", groups=groups)
 
 
 @bp.post("/groups")
@@ -51,7 +56,7 @@ def create_group():
     with _flash_errors():
         with get_db() as conn:
             token = store.create_group(conn, request.form.get("name", ""), Group(budget=request.form.get("budget", "").strip()))
-        flash("Group created! Bookmark this page: it's your organizer link, and the only way to manage the group.", "success")
+        flash("Group created! Save your organizer link below: it's the only way to manage the group.", "success")
         return redirect(url_for(".admin", token=token))
     return redirect(url_for(".home"))
 
@@ -68,7 +73,7 @@ def restore_group():
     with _flash_errors():
         with get_db() as conn:
             token = store.create_group(conn, request.form.get("name", ""), group)
-        flash("Group restored! Bookmark this page: it's your new organizer link.", "success")
+        flash("Group restored! Save your new organizer link below: it's the only way to manage the group.", "success")
         return redirect(url_for(".admin", token=token))
     return redirect(url_for(".home"))
 
@@ -87,9 +92,17 @@ def _back_to_admin(token: str, section: str):
     return redirect(url_for(".admin", token=token, _anchor=section))
 
 
+def _remember_organized(token: str) -> None:
+    """Remember the group in this browser, so the home page can link back to its organizer page."""
+    others = [t for t in session.get(ORGANIZED, []) if t != token]
+    session[ORGANIZED] = [token, *others][:MAX_ORGANIZED]
+    session.permanent = True
+
+
 @bp.get("/admin/<token>")
 def admin(token):
     group = _admin_group(token)
+    _remember_organized(token)
     people = store.participants(get_db(), group["id"])
     excluded = {p["id"]: {normalize(name) for name in json.loads(p["exclude"])} for p in people}
     return render_template(
@@ -98,6 +111,7 @@ def admin(token):
         people=people,
         excluded=excluded,
         min_participants=MIN_PARTICIPANTS,
+        admin_url=url_for(".admin", token=token, _external=True),
         invite_url=url_for(".group_page", code=group["invite_code"], _external=True),
     )
 

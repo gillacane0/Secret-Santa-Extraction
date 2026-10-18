@@ -70,6 +70,15 @@ def test_everyone_sees_only_their_own_match(app):
     assert text(organizer.get(admin)).count("Has seen their match") == len(NAMES)
 
 
+def test_home_page_remembers_the_groups_you_organize(app):
+    organizer, admin, _ = new_group(app, name="Office party")
+    page = text(organizer.get("/"))
+    assert "Your groups" in page
+    assert f'<a href="{admin}">Office party</a>' in page
+    assert "Your groups" not in text(app.test_client().get("/"))  # other browsers don't see it
+    assert f'value="http://localhost{admin}"' in text(organizer.get(admin))  # the link to save
+
+
 def test_join_mistakes_are_explained(app):
     _, _, invite = new_group(app)
     join(app, invite, "Anna")

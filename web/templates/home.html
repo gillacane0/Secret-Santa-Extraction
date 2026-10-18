@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Draw names with your friends</h1>
+<p class="lead">Create a group, send the invite link to your friends and draw the names once everyone has joined. Each person sees only who they got: the organizer never sees the matches.</p>
+
+{% if groups %}
+<section class="card">
+  <h2>Your groups</h2>
+  <p class="muted">The groups you organize, remembered by this browser.</p>
+  <ul class="people">
+    {% for group in groups %}
+    <li>
+      <div>
+        <a href="{{ url_for('santa.admin', token=group.admin_token) }}">{{ group.name }}</a>
+        <p class="hint">{{ "Names drawn" if group.drawn_on else "Open for joining" }}</p>
+      </div>
+      <form method="post" action="{{ url_for('santa.forget_group', token=group.admin_token) }}" data-confirm="Remove {{ group.name }} from this list? The group stays on the site, but you'll need its organizer link to open it again: make sure you saved it.">
+        <button type="submit" class="small secondary">Forget</button>
+      </form>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+<form class="card" method="post" action="{{ url_for('santa.create_group') }}">
+  <h2>Create a group</h2>
+  <label for="name">Group name</label>
+  <input id="name" name="name" type="text" required maxlength="80" placeholder="Christmas with friends">
+  <label for="budget">Budget <span class="muted">(optional)</span></label>
+  <input id="budget" name="budget" type="text" maxlength="40" placeholder="20 €">
+  <button type="submit">Create group</button>
+</form>
+
+<details class="card">
+  <summary>Restore a group from a backup</summary>
+  <form method="post" action="{{ url_for('santa.restore_group') }}" enctype="multipart/form-data">
+    <p class="hint">Upload a backup from the organizer page, or a group file from the desktop app, to keep the history of past draws.</p>
+    <label for="restore-name">Group name</label>
+    <input id="restore-name" name="name" type="text" required maxlength="80">
+    <label for="backup">Backup file</label>
+    <input id="backup" name="backup" type="file" accept=".json,application/json" required>
+    <button type="submit" class="secondary">Restore group</button>
+  </form>
+</details>
+{% endblock %}

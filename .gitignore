@@ -1,0 +1,17 @@
+# Email password
+.env
+
+# Your groups: names, email addresses and draw history
+groups/
+
+__pycache__/
+.pytest_cache/
+.venv/
+*.tmp
+
+# The website's database
+instance/
+
+# Editor settings
+.vscode/
+.idea/

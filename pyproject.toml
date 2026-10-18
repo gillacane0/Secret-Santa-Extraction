@@ -1,9 +1,19 @@
 [project]
 name = "secret-santa-extraction"
 version = "0.1.0"
-description = "Add your description here"
+description = "Secret Santa draw with exclusions, history of past years and email notifications"
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.13"
 dependencies = [
-    "numpy>=2.5.4",
+    "flask>=3.1.3",
+    "python-dotenv>=1.2.4",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

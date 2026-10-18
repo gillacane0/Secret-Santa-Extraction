@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{{ group.name }}{% endblock %}
+{% block content %}
+<h1>{{ group.name }}</h1>
+{% if group.budget %}<p class="lead">Budget: {{ group.budget }}</p>{% endif %}
+
+{% if not group.drawn_on %}
+<form class="card" method="post" action="{{ url_for('santa.join', code=group.invite_code) }}">
+  <h2>Join the Secret Santa</h2>
+  <label for="name">Your name</label>
+  <input id="name" name="name" type="text" required maxlength="40" autocomplete="given-name" value="{{ form.name }}">
+  <label for="pin">Choose a PIN</label>
+  <input id="pin" name="pin" type="password" inputmode="numeric" pattern="[0-9]{4,12}" required minlength="4" maxlength="12" autocomplete="new-password">
+  <p class="hint">4 to 12 digits. You'll need it to see who you got, so don't forget it!</p>
+  <label for="pin_again">Repeat the PIN</label>
+  <input id="pin_again" name="pin_again" type="password" inputmode="numeric" pattern="[0-9]{4,12}" required minlength="4" maxlength="12" autocomplete="new-password">
+  <label for="wishlist">Your wishlist <span class="muted">(optional)</span></label>
+  <textarea id="wishlist" name="wishlist" maxlength="1000" placeholder="Books, board games, size M…">{{ form.wishlist }}</textarea>
+  <p class="hint">Only your Secret Santa will see it. You can change it later.</p>
+  <button type="submit">Join</button>
+</form>
+{% else %}
+<p class="card">The names have already been drawn, so it's too late to join. If you're in the group, log in below.</p>
+{% endif %}
+
+{% if people %}
+<form class="card" method="post" action="{{ url_for('santa.login', code=group.invite_code) }}">
+  <h2>Already joined? Log in</h2>
+  <label for="participant">Your name</label>
+  <select id="participant" name="participant" required>
+    <option value="">Choose…</option>
+    {% for person in people %}
+    <option value="{{ person.id }}">{{ person.name }}</option>
+    {% endfor %}
+  </select>
+  <label for="login-pin">Your PIN</label>
+  <input id="login-pin" name="pin" type="password" inputmode="numeric" required maxlength="12" autocomplete="current-password">
+  <p class="hint">If the organizer reset your PIN, the one you type now becomes your new PIN.</p>
+  <button type="submit">Log in</button>
+</form>
+
+<section class="card">
+  <h2>Who's in <span class="muted">· {{ people|length }}</span></h2>
+  <p>{{ people|map(attribute="name")|join(", ") }}</p>
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,404 @@
+:root {
+  --bg: #f6f1e7;
+  --card: #ffffff;
+  --line: #e9dfcf;
+  --field: #fffdf9;
+  --field-line: #d9ccb8;
+  --ink: #2b2622;
+  --muted: #7d7166;
+  --red: #b3202a;
+  --red-dark: #8e1820;
+  --red-soft: #f9e3e4;
+  --green: #1f6f43;
+  --green-soft: #e4f1e8;
+  --whatsapp: #1f8f4e;
+  --radius: 16px;
+  --serif: Georgia, "Times New Roman", serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.top {
+  background: var(--red);
+  border-bottom: 3px solid var(--red-dark);
+  padding: 14px 16px;
+  text-align: center;
+}
+
+.top a {
+  color: #fff;
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  letter-spacing: 0.5px;
+  text-decoration: none;
+}
+
+main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px 16px 56px;
+}
+
+h1,
+h2 {
+  font-family: var(--serif);
+  font-weight: normal;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 2rem;
+  margin: 4px 0 8px;
+}
+
+h2 {
+  font-size: 1.3rem;
+  margin: 0 0 8px;
+}
+
+p {
+  margin: 0 0 10px;
+}
+
+a {
+  color: var(--red);
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.lead,
+.muted {
+  color: var(--muted);
+}
+
+.lead {
+  font-size: 1.05rem;
+}
+
+.hint {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.card {
+  margin: 16px 0;
+  padding: 20px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 6px 20px rgba(80, 50, 20, 0.06);
+}
+
+details.card > summary {
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: 1.1rem;
+}
+
+/* ----- Forms ----- */
+
+label {
+  display: block;
+  margin: 14px 0 6px;
+  font-weight: 600;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="number"],
+select,
+textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  background: var(--field);
+  border: 1px solid var(--field-line);
+  border-radius: 10px;
+  color: inherit;
+  font: inherit;
+}
+
+textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--green);
+  outline: 3px solid rgba(31, 111, 67, 0.25);
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: normal;
+}
+
+.check input {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--green);
+}
+
+button,
+.button {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 11px 20px;
+  background: var(--red);
+  border: 1px solid var(--red);
+  border-radius: 10px;
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+button:hover,
+.button:hover {
+  background: var(--red-dark);
+  border-color: var(--red-dark);
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+button.secondary,
+.button.secondary {
+  background: transparent;
+  color: var(--red);
+}
+
+button.secondary:hover,
+.button.secondary:hover {
+  background: var(--red-soft);
+}
+
+button.small {
+  margin: 0;
+  padding: 5px 10px;
+  font-size: 0.85rem;
+  font-weight: normal;
+}
+
+button.link {
+  margin: 8px 0 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--muted);
+  font-weight: normal;
+  text-decoration: underline;
+}
+
+.button.whatsapp {
+  background: var(--whatsapp);
+  border-color: var(--whatsapp);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 10px;
+}
+
+/* ----- Messages and labels ----- */
+
+.flash {
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+}
+
+.flash.success {
+  background: var(--green-soft);
+  color: var(--green);
+}
+
+.flash.error {
+  background: var(--red-soft);
+  color: var(--red-dark);
+}
+
+.pill {
+  display: inline-block;
+  padding: 3px 12px;
+  background: var(--green-soft);
+  border-radius: 999px;
+  color: var(--green);
+  font-size: 0.85rem;
+}
+
+.pill.done {
+  background: var(--red-soft);
+  color: var(--red-dark);
+}
+
+/* ----- Organizer page ----- */
+
+.copy {
+  display: flex;
+  gap: 8px;
+}
+
+.copy input {
+  flex: 1;
+  min-width: 0;
+}
+
+.copy button {
+  margin: 0;
+}
+
+.people {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.people li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+
+.people .hint {
+  margin: 0;
+}
+
+.people a {
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+}
+
+.actions form {
+  margin: 0;
+}
+
+.exclusion {
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+
+.exclusion p {
+  margin: 0;
+}
+
+.checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.checks label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.checks label:has(input:checked) {
+  background: var(--red-soft);
+  border-color: var(--red);
+}
+
+.checks input {
+  margin: 0;
+  accent-color: var(--red);
+}
+
+/* ----- Participant page ----- */
+
+.reveal {
+  text-align: center;
+}
+
+.reveal summary {
+  padding: 22px 16px;
+  border: 2px dashed var(--green);
+  border-radius: 12px;
+  color: var(--green);
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  list-style: none;
+  cursor: pointer;
+}
+
+.reveal summary::-webkit-details-marker {
+  display: none;
+}
+
+.reveal .when-open,
+.reveal[open] .when-closed {
+  display: none;
+}
+
+.reveal[open] .when-open {
+  display: inline;
+}
+
+.reveal[open] summary {
+  padding: 0;
+  border: 0;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.9rem;
+  text-decoration: underline;
+}
+
+.match {
+  display: inline-block;
+  margin: 6px 0 18px;
+  padding: 12px 28px;
+  border: 2px dashed var(--green);
+  border-radius: 12px;
+  color: var(--green);
+  font-family: var(--serif);
+  font-size: 2.2rem;
+  font-weight: bold;
+}
+
+.wishlist {
+  padding: 12px 14px;
+  background: var(--bg);
+  border-radius: 12px;
+  text-align: left;
+  white-space: pre-wrap;
+}

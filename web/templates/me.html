@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ group.name }}{% endblock %}
+{% block content %}
+<p class="eyebrow">{{ group.name }}</p>
+<h1>Hi {{ person.name }}!</h1>
+{% if group.budget %}<p class="lead">Budget: {{ group.budget }}</p>{% endif %}
+
+{% if not group.drawn_on %}
+<section class="card">
+  <h2>You're in 🎉</h2>
+  <p>The names haven't been drawn yet. Come back with the same link once the organizer has drawn them.</p>
+  <p class="muted">Who's in so far: {{ people|map(attribute="name")|join(", ") }}</p>
+</section>
+{% elif receiver %}
+<details class="card reveal">
+  <summary><span class="when-closed">🎁 Tap to see who you got</span><span class="when-open">Hide</span></summary>
+  <p>You're the Secret Santa of</p>
+  <p class="match">{{ receiver.name }}</p>
+  {% if receiver.wishlist %}
+    <h2>{{ receiver.name }}'s wishlist</h2>
+    <p class="wishlist">{{ receiver.wishlist }}</p>
+  {% else %}
+    <p class="muted">{{ receiver.name }} hasn't written a wishlist yet. Check again in a few days!</p>
+  {% endif %}
+</details>
+{% else %}
+<p class="card">The names were drawn without you. Talk to the organizer.</p>
+{% endif %}
+
+<form class="card" method="post" action="{{ url_for('santa.save_wishlist', code=group.invite_code) }}">
+  <h2>Your wishlist</h2>
+  <p class="muted">Only your Secret Santa will see it.</p>
+  <textarea name="wishlist" maxlength="1000" aria-label="Your wishlist" placeholder="Books, board games, size M…">{{ person.wishlist }}</textarea>
+  <button type="submit">Save wishlist</button>
+</form>
+
+<form method="post" action="{{ url_for('santa.logout', code=group.invite_code) }}">
+  <button type="submit" class="link">Log out</button>
+</form>
+{% endblock %}

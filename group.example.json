@@ -1,0 +1,12 @@
+{
+  "participants": [
+    { "name": "Anna", "email": "anna@example.com", "exclude": ["Bruno"] },
+    { "name": "Bruno", "email": "bruno@example.com", "exclude": ["Anna"] },
+    { "name": "Carla", "email": "carla@example.com", "exclude": [] },
+    { "name": "Dario", "email": "dario@example.com", "exclude": ["Elena"] },
+    { "name": "Elena", "email": "elena@example.com", "exclude": [] }
+  ],
+  "budget": "20 €",
+  "single_chain": false,
+  "history_years": 2
+}

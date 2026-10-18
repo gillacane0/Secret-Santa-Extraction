@@ -1,7 +1,7 @@
 [project]
 name = "secret-santa-extraction"
 version = "0.1.0"
-description = "Add your description here"
+description = "Secret Santa draw with exclusions, history of past years and email notifications"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [

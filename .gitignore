@@ -11,3 +11,6 @@ __pycache__/
 
 # The website's database
 instance/
+
+# Editor settings
+.vscode/

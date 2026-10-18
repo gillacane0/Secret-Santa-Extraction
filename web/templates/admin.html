@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}{{ group.name }} · Organizer{% endblock %}
+{% block content %}
+<p class="eyebrow">Organizer page</p>
+<h1>{{ group.name }}</h1>
+<p>
+  {% if group.drawn_on %}
+    <span class="pill done">Names drawn on {{ group.drawn_on|day }}</span>
+  {% else %}
+    <span class="pill">Open for joining</span>
+  {% endif %}
+  {% if group.budget %}<span class="muted">· Budget {{ group.budget }}</span>{% endif %}
+</p>
+
+<section class="card" id="invite">
+  {% if group.drawn_on %}
+    <h2>The participants' link</h2>
+    <p class="muted">Everyone logs in with this link to see who they got.</p>
+    {% set message = "The names are drawn! 🎁 See who you got: " %}
+  {% else %}
+    <h2>Invite your friends</h2>
+    <p class="muted">Send this link to everyone taking part. If you're taking part too, join with it like everybody else.</p>
+    {% set message = "Join our Secret Santa! 🎁 " %}
+  {% endif %}
+  <div class="copy">
+    <input id="invite-link" type="text" value="{{ invite_url }}" readonly aria-label="Invite link">
+    <button type="button" data-copy="invite-link">Copy</button>
+  </div>
+  <a class="button whatsapp" href="https://wa.me/?text={{ (message ~ invite_url)|urlencode }}" target="_blank" rel="noopener noreferrer">Share on WhatsApp</a>
+  <p class="hint">This page has its own secret address: bookmark it and don't share it, it's the only way to manage the group.</p>
+</section>
+
+<section class="card" id="participants">
+  <h2>Participants <span class="muted">· {{ people|length }}</span></h2>
+  {% if not people %}
+    <p class="muted">Nobody has joined yet. Send the invite link!</p>
+  {% else %}
+    <ul class="people">
+      {% for person in people %}
+      <li>
+        <div>
+          <strong>{{ person.name }}</strong>
+          <p class="hint">
+            {% if group.drawn_on %}
+              {{ "Has seen their match" if person.seen_on else "Hasn't looked yet" }}
+            {% else %}
+              {{ "Wrote a wishlist" if person.wishlist else "No wishlist yet" }}
+            {% endif %}
+            {% if not person.pin_hash %}· Will choose a new PIN{% endif %}
+          </p>
+        </div>
+        <div class="actions">
+          <form method="post" action="{{ url_for('santa.reset_pin', token=group.admin_token, participant_id=person.id) }}" data-confirm="Reset {{ person.name }}'s PIN? Next time they log in, they'll choose a new one.">
+            <button type="submit" class="small secondary">Reset PIN</button>
+          </form>
+          {% if not group.drawn_on %}
+          <form method="post" action="{{ url_for('santa.remove_participant', token=group.admin_token, participant_id=person.id) }}" data-confirm="Remove {{ person.name }} from the group?">
+            <button type="submit" class="small secondary">Remove</button>
+          </form>
+          {% endif %}
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</section>
+
+{% if people|length > 1 %}
+<form class="card" id="exclusions" method="post" action="{{ url_for('santa.save_exclusions', token=group.admin_token) }}">
+  <h2>Exclusions</h2>
+  <p class="muted">
+    Who must never get whom, like couples (tick both ways).
+    {% if group.history_years %}Pairings from the last {{ group.history_years }} year{{ "s" if group.history_years > 1 }} are avoided automatically.{% endif %}
+  </p>
+  {% for person in people %}
+  <div class="exclusion">
+    <p><strong>{{ person.name }}</strong> never gives to</p>
+    <div class="checks">
+      {% for other in people if other.id != person.id %}
+      <label><input type="checkbox" name="exclude-{{ person.id }}" value="{{ other.id }}" {{ "checked" if other.name_key in excluded[person.id] }}> {{ other.name }}</label>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+  <button type="submit">Save exclusions</button>
+</form>
+{% endif %}
+
+<section class="card" id="draw">
+  <h2>The draw</h2>
+  {% if not group.drawn_on %}
+    {% if people|length < min_participants %}
+      <p class="muted">You need at least {{ min_participants }} participants to draw the names.</p>
+    {% else %}
+      <p class="muted">When everybody has joined, draw the names. After that, nobody else can join.</p>
+    {% endif %}
+    <form method="post" action="{{ url_for('santa.draw', token=group.admin_token) }}" data-confirm="Draw the names now? After this, nobody else can join.">
+      <button type="submit" {{ "disabled" if people|length < min_participants }}>🎁 Draw the names</button>
+    </form>
+  {% else %}
+    <p>Everyone can now log in with the invite link to see who they got.</p>
+    <div class="row">
+      <form method="post" action="{{ url_for('santa.new_round', token=group.admin_token) }}" data-confirm="Start next year's round? Matches and wishlists will be cleared. This year's pairings stay in the history so they won't repeat.">
+        <button type="submit" class="secondary">Start next year's round</button>
+      </form>
+      <form method="post" action="{{ url_for('santa.cancel_draw', token=group.admin_token) }}" data-confirm="Cancel this draw? Everybody's match will be deleted, as if the draw never happened.">
+        <button type="submit" class="secondary">Cancel this draw</button>
+      </form>
+    </div>
+  {% endif %}
+</section>
+
+<form class="card" id="settings" method="post" action="{{ url_for('santa.save_settings', token=group.admin_token) }}">
+  <h2>Settings</h2>
+  <label for="name">Group name</label>
+  <input id="name" name="name" type="text" required maxlength="80" value="{{ group.name }}">
+  <label for="budget">Budget</label>
+  <input id="budget" name="budget" type="text" maxlength="40" value="{{ group.budget }}" placeholder="20 €">
+  <label for="history_years">Avoid the pairings of the last … years</label>
+  <input id="history_years" name="history_years" type="number" min="0" max="10" value="{{ group.history_years }}">
+  <label class="check"><input type="checkbox" name="single_chain" {{ "checked" if group.single_chain }}> Single chain: everyone in one loop, A → B → C → … → A</label>
+  <button type="submit">Save settings</button>
+</form>
+
+<section class="card" id="backup">
+  <h2>Backup</h2>
+  <p class="muted">Free hosting can delete inactive accounts, so download a backup now and then. It keeps the group, the exclusions and the history of past draws, but not this year's matches.</p>
+  <a class="button secondary" href="{{ url_for('santa.backup', token=group.admin_token) }}">Download backup</a>
+</section>
+{% endblock %}

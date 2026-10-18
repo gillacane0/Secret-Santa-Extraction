@@ -8,3 +8,6 @@ __pycache__/
 .pytest_cache/
 .venv/
 *.tmp
+
+# The website's database
+instance/

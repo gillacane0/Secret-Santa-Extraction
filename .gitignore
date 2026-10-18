@@ -14,3 +14,4 @@ instance/
 
 # Editor settings
 .vscode/
+.idea/

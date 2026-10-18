@@ -99,6 +99,10 @@ def _remember_organized(token: str) -> None:
     session.permanent = True
 
 
+def _forget_organized(token: str) -> None:
+    session[ORGANIZED] = [t for t in session.get(ORGANIZED, []) if t != token]
+
+
 @bp.get("/admin/<token>")
 def admin(token):
     group = _admin_group(token)
@@ -206,6 +210,24 @@ def backup(token):
         mimetype="application/json",
         headers={"Content-Disposition": f'attachment; filename="{filename}.json"'},
     )
+
+
+@bp.post("/admin/<token>/delete")
+def delete_group(token):
+    group = _admin_group(token)
+    with get_db() as conn:
+        store.delete_group(conn, group["id"])
+    _forget_organized(token)
+    flash(f"{group['name']} was deleted.", "success")
+    return redirect(url_for(".home"))
+
+
+@bp.post("/admin/<token>/forget")
+def forget_group(token):
+    # Only this browser's list changes: the group stays, and its organizer link still works.
+    _forget_organized(token)
+    flash("Removed from your groups. Open its organizer link to see it here again.", "success")
+    return redirect(url_for(".home"))
 
 
 # ----- Participants -----

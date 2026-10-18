@@ -84,6 +84,14 @@ def test_cancelled_draw_is_forgotten(conn):
     assert set(matches(conn, token).values()) == {None}
 
 
+def test_deleting_a_drawn_group_removes_its_participants(conn):
+    token = make_group(conn, *NAMES)
+    store.draw_names(conn, store.group_by_token(conn, token), date(2026, 12, 1))
+    store.delete_group(conn, store.group_by_token(conn, token)["id"])
+    assert store.group_by_token(conn, token) is None
+    assert conn.execute("SELECT COUNT(*) FROM participants").fetchone()[0] == 0
+
+
 def test_restored_people_choose_their_pin_at_first_login(conn):
     backup = Group.from_dict({"participants": [{"name": n, "email": "", "exclude": []} for n in NAMES]})
     token = store.create_group(conn, "Restored", backup)

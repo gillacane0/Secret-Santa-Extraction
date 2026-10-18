@@ -135,4 +135,12 @@
   <p class="muted">Free hosting can delete inactive accounts, so download a backup now and then. It keeps the group, the exclusions and the history of past draws, but not this year's matches.</p>
   <a class="button secondary" href="{{ url_for('santa.backup', token=group.admin_token) }}">Download backup</a>
 </section>
+
+<section class="card" id="delete">
+  <h2>Delete the group</h2>
+  <p class="muted">Deletes the group for good, with its participants, matches, wishlists and history. Handy for test groups. If you might need it again, download a backup first.</p>
+  <form method="post" action="{{ url_for('santa.delete_group', token=group.admin_token) }}" data-confirm="Delete {{ group.name }} for good? Participants, matches, wishlists and history will be lost. This can't be undone.">
+    <button type="submit" class="secondary">Delete group</button>
+  </form>
+</section>
 {% endblock %}

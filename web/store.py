@@ -109,6 +109,11 @@ def update_settings(
     )
 
 
+def delete_group(conn: sqlite3.Connection, group_id: int) -> None:
+    """Delete the group for good, with its participants."""
+    conn.execute("DELETE FROM groups WHERE id = ?", (group_id,))
+
+
 def as_group(group: sqlite3.Row, rows: list[sqlite3.Row]) -> Group:
     """The group in the desktop app's format, which is also the backup format."""
     return Group(

@@ -79,6 +79,27 @@ def test_home_page_remembers_the_groups_you_organize(app):
     assert f'value="http://localhost{admin}"' in text(organizer.get(admin))  # the link to save
 
 
+def test_forget_only_changes_this_browsers_list(app):
+    organizer, admin, _ = new_group(app, name="Office party")
+    page = text(organizer.post(f"{admin}/forget", follow_redirects=True))
+    assert "Removed from your groups" in page
+    assert "Office party" not in page
+    assert "Office party" in text(organizer.get(admin))  # the group is still there...
+    assert "Office party" in text(organizer.get("/"))  # ...and opening it lists it again
+
+
+def test_deleted_group_is_gone(app):
+    organizer, admin, invite = new_group(app, name="Test group")
+    for name in NAMES[:3]:
+        join(app, invite, name)
+    organizer.post(f"{admin}/draw")
+    page = text(organizer.post(f"{admin}/delete", follow_redirects=True))
+    assert "Test group was deleted." in page
+    assert "Your groups" not in page
+    assert organizer.get(admin).status_code == 404
+    assert organizer.get(invite).status_code == 404
+
+
 def test_join_mistakes_are_explained(app):
     _, _, invite = new_group(app)
     join(app, invite, "Anna")

@@ -10,8 +10,13 @@
   <ul class="people">
     {% for group in groups %}
     <li>
-      <a href="{{ url_for('santa.admin', token=group.admin_token) }}">{{ group.name }}</a>
-      <span class="hint">{{ "Names drawn" if group.drawn_on else "Open for joining" }}</span>
+      <div>
+        <a href="{{ url_for('santa.admin', token=group.admin_token) }}">{{ group.name }}</a>
+        <p class="hint">{{ "Names drawn" if group.drawn_on else "Open for joining" }}</p>
+      </div>
+      <form method="post" action="{{ url_for('santa.forget_group', token=group.admin_token) }}" data-confirm="Remove {{ group.name }} from this list? The group stays on the site, but you'll need its organizer link to open it again: make sure you saved it.">
+        <button type="submit" class="small secondary">Forget</button>
+      </form>
     </li>
     {% endfor %}
   </ul>
